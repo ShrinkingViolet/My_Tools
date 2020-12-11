@@ -1,4 +1,5 @@
 moviepy==0.2.3.2
 requests>=2.20.0
-feedparser
-ffmpeg-python
+feedparser==6.0.2
+ffmpeg-python==0.2.0
+imageio-ffmpeg==0.4.2
