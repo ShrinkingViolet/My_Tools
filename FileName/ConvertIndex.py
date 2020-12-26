@@ -23,8 +23,9 @@ def ch2int(uchar):
             total_sum = '0' + total_sum
     return total_sum
 
-ext = '.' + open('extension.txt').read().splitlines()[0]
-path = open('path.txt').read().splitlines()[0]
+ext = '.' + 'epub'
+path = '.' + os.sep
+
 def getFileName(t_path):
     f_list = os.listdir(t_path)
     t_list = []
