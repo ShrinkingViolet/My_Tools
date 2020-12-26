@@ -36,8 +36,8 @@ def getFileName(t_path):
 ##(?<=第).*?(?=卷)
 ##第.*?卷
 if __name__ == '__main__':
-    list = getFileName(path)
-    for i in list:
+    f_list = getFileName(path)
+    for i in f_list:
         oldname = path + i
         index = re.findall(r'(?<=第).*?(?=卷)',i)
         if len(index) == 0:
