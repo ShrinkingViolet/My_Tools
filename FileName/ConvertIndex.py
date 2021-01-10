@@ -1,6 +1,7 @@
 import os
 import re
 import string
+import shutil
 common_used_numerals_tmp ={'零':0, '一':1, '二':2, '两':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '十':10, '百':100, '千':1000, '万':10000, '亿':100000000}
 def ch2int(uchar):
     sep_char = re.split(r'亿|万',uchar)
@@ -40,10 +41,23 @@ if __name__ == '__main__':
     f_list = getFileName(path)
     for i in f_list:
         oldname = path + i
-        index = re.findall(r'(?<=第).*?(?=卷)',i)
+        name_list = re.findall(r'^.*?(?=_)',i)
+        if len(name_list) == 0:
+            continue
+        name = name_list[0]
+        if os.path.isdir(path+name+os.sep) == 0:
+            os.mkdir(name)
+        index = re.findall(r'(?<=第).*(?=卷)',i)
         if len(index) == 0:
             continue
-        num = ch2int(index[-1])
-        newname = path + re.sub(r'第.*?卷', num, i)
+        num_index = re.findall(r'(?<=第)[1-9\.]*(?=卷)',i)
+        if len(num_index) == 0:
+            num = ch2int(index[-1])
+        else :
+            num = num_index[-1]
+        # newname = path + re.sub(r'第.*?卷', num, i)
+        newname = path + name + os.sep + name + '_' + num + ext
         print('old:',oldname,'=====>',"new:",newname,'\n')
-        os.rename(oldname,newname)
+        # os.rename(oldname,newname)
+        shutil.move(oldname,newname)
+        
