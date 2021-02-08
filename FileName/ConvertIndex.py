@@ -2,27 +2,40 @@ import os
 import re
 import string
 import shutil
-common_used_numerals_tmp ={'零':0, '一':1, '二':2, '两':2, '三':3, '四':4, '五':5, '六':6, '七':7, '八':8, '九':9, '十':10, '百':100, '千':1000, '万':10000, '亿':100000000}
-def ch2int(uchar):
-    sep_char = re.split(r'亿|万',uchar)
-    total_sum = 0
-    for i,sc in enumerate(sep_char):
-        split_num = sc.replace('千', '1000').replace('百', '100').replace('十', '10')
-        int_series = re.split(r'(\d{1,})', split_num)
-        int_series.append("")
-        int_series = ["".join(i) for i in zip(int_series[0::2],int_series[1::2])]
-        int_series = ['零' if i == '' else i for i in int_series]
-        num = 0
-        for ix, it in enumerate(int_series):
-            it = re.sub('零', '', it) if it != '零' else it
-            ##print("level 2:{}{}".format(ix,it))
-            temp = common_used_numerals_tmp[it[0]]*int(it[1:]) if len(it)>1 else common_used_numerals_tmp[it[0]]
-            num += temp
-        total_sum += num * (10 ** (4*(len(sep_char) - i - 1)))
-        total_sum = str(total_sum)
-        if len(total_sum) == 1:
-            total_sum = '0' + total_sum
-    return total_sum
+digit = {'一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9}
+
+def _trans(s):
+    num = 0
+    if s:
+        idx_q, idx_b, idx_s = s.find('千'), s.find('百'), s.find('十')
+        if idx_q != -1:
+            num += digit[s[idx_q - 1:idx_q]] * 1000
+        if idx_b != -1:
+            num += digit[s[idx_b - 1:idx_b]] * 100
+        if idx_s != -1:
+            # 十前忽略一的处理
+            num += digit.get(s[idx_s - 1:idx_s], 1) * 10
+        if s[-1] in digit:
+            num += digit[s[-1]]
+    num = str(num)
+    if len(num) == 1:
+            num = '0' + num
+    return num
+
+def trans(chn):
+    chn = chn.replace('零', '')
+    idx_y, idx_w = chn.rfind('亿'), chn.rfind('万')
+    if idx_w < idx_y:
+        idx_w = -1
+    num_y, num_w = 100000000, 10000
+    if idx_y != -1 and idx_w != -1:
+        return trans(chn[:idx_y]) * num_y + _trans(chn[idx_y + 1:idx_w]) * num_w + _trans(chn[idx_w + 1:])
+    elif idx_y != -1:
+        return trans(chn[:idx_y]) * num_y + _trans(chn[idx_y + 1:])
+    elif idx_w != -1:
+        return _trans(chn[:idx_w]) * num_w + _trans(chn[idx_w + 1:])
+    return _trans(chn)
+
 
 ext = '.' + 'epub'
 path = '.' + os.sep
@@ -52,7 +65,7 @@ if __name__ == '__main__':
             continue
         num_index = re.findall(r'(?<=第)[1-9\.]*(?=卷)',i)
         if len(num_index) == 0:
-            num = ch2int(index[-1])
+            num = trans(index[-1])
         else :
             num = num_index[-1]
         # newname = path + re.sub(r'第.*?卷', num, i)
