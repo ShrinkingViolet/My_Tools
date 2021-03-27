@@ -68,9 +68,9 @@ if __name__ == '__main__':
             num = trans(index[-1])
         else :
             num = num_index[-1]
-        # newname = path + re.sub(r'第.*?卷', num, i)
-        newname = path + name + os.sep + name + '_' + num + ext
+        newname = re.sub(r'第.*?卷', num, i)
+        newname = re.sub(r'_utf8','',newname)
+        newname = path + name + os.sep + newname
         print('old:',oldname,'=====>',"new:",newname,'\n')
         # os.rename(oldname,newname)
         shutil.move(oldname,newname)
-        
