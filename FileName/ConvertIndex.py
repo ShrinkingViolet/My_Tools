@@ -54,7 +54,7 @@ if __name__ == '__main__':
     f_list = getFileName(path)
     for i in f_list:
         oldname = path + i
-        name_list = re.findall(r'^.*?(?=_)',i)
+        name_list = re.findall(r'^.*?(?=_第)',i)
         if len(name_list) == 0:
             continue
         name = name_list[0]
